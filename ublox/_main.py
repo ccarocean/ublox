@@ -77,47 +77,47 @@ def main():
     keys = {'harv': read_key('../lidar/harv.key')}
     week = None
     hp_wrtr = None
-    #led = LED(15)
-    #try:
-    while True:
-        led_timer = dt.datetime.utcnow()
-        now = dt.datetime.utcnow()
-        min = dt.datetime(now.year, now.month, now.day, now.hour, now.minute)
-        end = min + dt.timedelta(minutes=1)
-        print('Now: ', now)
-        print('End: ', end)
-        raw, hp_pos, t = [], [], []
-        while dt.datetime.utcnow() < end:
-            rdr = UBXReader(dev, msg_dict)
-            packet = rdr.read_packet()
-            if isinstance(packet, RxmRawx):
-                #print('Raw Packet')
-                raw.append(packet)
-                week = packet.week
-            elif isinstance(packet, NavHPPOSLLH):
-                # TODO: Instead of writing to file, create packet and send via API
-                #print('Position Packet')
-                if week is not None:
-                    hp_pos.append(packet)
-            elif isinstance(packet, NavTimeUTC):
-                # TODO: Set system Time
-                #print('Time Packet')
-                t.append(packet)
-            else:
-                pass
-            if (dt.datetime.now() - led_timer).total_seconds() >= 1:
-                #led.switch()
-                led_timer = dt.datetime.now()
-        # Get packets to send
-        if raw:
-            p_raw = raw_packet(raw)
-            while not send(url + 'rawgps/' + loc, keys[loc], p_raw):
-                pass
+    led = LED(15)
+    try:
+        while True:
+            led_timer = dt.datetime.utcnow()
+            now = dt.datetime.utcnow()
+            min = dt.datetime(now.year, now.month, now.day, now.hour, now.minute)
+            end = min + dt.timedelta(minutes=1)
+            print('Now: ', now)
+            print('End: ', end)
+            raw, hp_pos, t = [], [], []
+            while dt.datetime.utcnow() < end:
+                rdr = UBXReader(dev, msg_dict)
+                packet = rdr.read_packet()
+                if isinstance(packet, RxmRawx):
+                    #print('Raw Packet')
+                    raw.append(packet)
+                    week = packet.week
+                elif isinstance(packet, NavHPPOSLLH):
+                    # TODO: Instead of writing to file, create packet and send via API
+                    #print('Position Packet')
+                    if week is not None:
+                        hp_pos.append(packet)
+                elif isinstance(packet, NavTimeUTC):
+                    # TODO: Set system Time
+                    #print('Time Packet')
+                    t.append(packet)
+                else:
+                    pass
+                if (dt.datetime.now() - led_timer).total_seconds() >= 1:
+                    led.switch()
+                    led_timer = dt.datetime.now()
+            # Get packets to send
+            if raw:
+                p_raw = raw_packet(raw)
+                while not send(url + 'rawgps/' + loc, keys[loc], p_raw):
+                    pass
 
-        if hp_pos:
-            p_pos = pos_packet(hp_pos, week)
-            while not send(url + 'posgps/' + loc, keys[loc], p_pos):
-                pass
+            if hp_pos:
+                p_pos = pos_packet(hp_pos, week)
+                while not send(url + 'posgps/' + loc, keys[loc], p_pos):
+                    pass
 
-    #finally:
-    #    led.set_low()
+    finally:
+        led.set_low()
