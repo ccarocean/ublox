@@ -8,7 +8,7 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
                       InfTest, InfWarning, CfgValsetSend
 from configparser import ConfigParser
 from .api import send, sign
-#from .led import LED
+from .led import LED
 from .packets import pos_packet, raw_packet
 
 # DOWNLOAD EPHEMERIS: (2019 is year, 168 is day of year, 0 means daily, 19 is year, and n means navigation)
