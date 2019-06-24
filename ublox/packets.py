@@ -1,12 +1,13 @@
 import struct
 import numpy as np
+import datetime as dt
 
 
-def raw_packet(messages):
-    packet = b''
+def raw_packet(dayhour, messages):
+    time_header = int((dayhour - dt.datetime(1970, 1, 1)).total_seconds())
+    packet = struct.pack('<q', time_header)
     for i in messages:
-        unixtime = 0  # TODO
-        header = struct.pack('<qdHbB', unixtime, i.rcvTow, i.week, i.leapS, i.numMeas)
+        header = struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)
         data = b''
         for j in i.satellites:
             cno = min(max(int(j.cno/6), 1), 9)
@@ -16,11 +17,10 @@ def raw_packet(messages):
     return packet
 
 
-def pos_packet(messages, week):
+def pos_packet(dayhour, messages, week):
+    time_header = int((dayhour - dt.datetime(1970, 1, 1)).total_seconds())
     itow = int(np.mean([i.iTOW for i in messages]))
-    unixtime = 0  # TODO
     lon = np.mean([i.lon for i in messages])
     lat = np.mean([i.lat for i in messages])
     height = np.mean([i.height for i in messages])
-    #import pdb; pdb.set_trace()
-    return struct.pack('<qIHddd', unixtime, itow, week, lon, lat, height)
+    return struct.pack('<qIHddd', time_header, itow, week, lon, lat, height)

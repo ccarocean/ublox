@@ -28,8 +28,10 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pyserial',
-        'astropy',
         'dataclasses;python_version=="3.6"',
+        'pyjwt[crypto]',
+        'requests',
+        'RPi.GPIO'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

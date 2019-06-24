@@ -1,5 +1,4 @@
 pyserial
-astropy
 dataclasses;python_version=="3.6"
 pyjwt[crypto]
 requests

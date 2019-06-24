@@ -2,11 +2,11 @@ import serial
 import numpy as np
 import datetime as dt
 import argparse
+from configparser import ConfigParser
 from .ublox_reader import UBXReader
 from .ublox_writer import UBXWriter
 from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, RxmRawx, InfDebug, InfError, InfNotice, \
                       InfTest, InfWarning, CfgValsetSend
-from configparser import ConfigParser
 from .api import send, sign
 from .led import LED
 from .packets import pos_packet, raw_packet
@@ -78,11 +78,13 @@ def main():
     week = None
     hp_wrtr = None
     led = LED(15)
+    led.switch()
     try:
         while True:
             led_timer = dt.datetime.utcnow()
             now = dt.datetime.utcnow()
             min = dt.datetime(now.year, now.month, now.day, now.hour, now.minute)
+            dayhour = dt.datetime(now.year, now.month, now.day, now.hour)
             end = min + dt.timedelta(minutes=1)
             print('Now: ', now)
             print('End: ', end)
@@ -91,17 +93,13 @@ def main():
                 rdr = UBXReader(dev, msg_dict)
                 packet = rdr.read_packet()
                 if isinstance(packet, RxmRawx):
-                    #print('Raw Packet')
                     raw.append(packet)
                     week = packet.week
                 elif isinstance(packet, NavHPPOSLLH):
-                    # TODO: Instead of writing to file, create packet and send via API
-                    #print('Position Packet')
                     if week is not None:
                         hp_pos.append(packet)
                 elif isinstance(packet, NavTimeUTC):
                     # TODO: Set system Time
-                    #print('Time Packet')
                     t.append(packet)
                 else:
                     pass
@@ -109,15 +107,16 @@ def main():
                     led.switch()
                     led_timer = dt.datetime.now()
             # Get packets to send
+            print("Packet sending at", dt.datetime.utcnow())
             if raw:
-                p_raw = raw_packet(raw)
+                p_raw = raw_packet(dayhour, raw)
                 while not send(url + 'rawgps/' + loc, keys[loc], p_raw):
-                    pass
+                    print('Issue sending packet.')
 
             if hp_pos:
-                p_pos = pos_packet(hp_pos, week)
+                p_pos = pos_packet(dayhour, hp_pos, week)
                 while not send(url + 'posgps/' + loc, keys[loc], p_pos):
-                    pass
+                    print('Issue sending packet.')
 
     finally:
         led.set_low()
