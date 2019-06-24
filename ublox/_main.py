@@ -3,11 +3,12 @@ import numpy as np
 import datetime as dt
 import argparse
 from configparser import ConfigParser
+from threading import Thread
 from .ublox_reader import UBXReader
 from .ublox_writer import UBXWriter
 from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, RxmRawx, InfDebug, InfError, InfNotice, \
                       InfTest, InfWarning, CfgValsetSend
-from .api import send, sign
+from .api import call_send
 from .led import LED
 from .packets import pos_packet, raw_packet
 
@@ -73,10 +74,8 @@ def main():
     i = 0
 
     loc = 'harv'
-    lat, lon = 34.468333 * np.pi/180, (-120.671667+360) * np.pi/180
     keys = {'harv': read_key('../lidar-read/harv.key')}
-    week = None
-    hp_wrtr = None
+    week = False
     led = LED(15)
     led.switch()
     try:
@@ -96,8 +95,7 @@ def main():
                     raw.append(packet)
                     week = packet.week
                 elif isinstance(packet, NavHPPOSLLH):
-                    if week is not None:
-                        hp_pos.append(packet)
+                    hp_pos.append(packet)
                 elif isinstance(packet, NavTimeUTC):
                     # TODO: Set system Time
                     t.append(packet)
@@ -110,13 +108,13 @@ def main():
             print("Packet sending at", dt.datetime.utcnow())
             if raw:
                 p_raw = raw_packet(dayhour, raw)
-                while not send(url + 'rawgps/' + loc, keys[loc], p_raw):
-                    print('Issue sending packet.')
+                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
+                t2.start()
 
-            if hp_pos:
+            if hp_pos and week:
                 p_pos = pos_packet(dayhour, hp_pos, week)
-                while not send(url + 'posgps/' + loc, keys[loc], p_pos):
-                    print('Issue sending packet.')
+                t3 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_pos,))
+                t3.start()
 
     finally:
         led.set_low()
