@@ -74,7 +74,7 @@ def main():
 
     loc = 'harv'
     lat, lon = 34.468333 * np.pi/180, (-120.671667+360) * np.pi/180
-    keys = {'harv': read_key('../lidar/harv.key')}
+    keys = {'harv': read_key('../lidar-read/harv.key')}
     week = None
     hp_wrtr = None
     led = LED(15)
