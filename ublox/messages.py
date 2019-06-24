@@ -3,7 +3,6 @@ import struct
 from dataclasses import dataclass
 import datetime as dt
 from collections import defaultdict
-from astropy.time import TimeDelta, Time
 
 _LOOKUPTABLE = {
     'CFG-INFMSG-UBX_USB':                (0x20920004, 'B'),
