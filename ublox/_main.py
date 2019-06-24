@@ -113,7 +113,7 @@ def main():
 
             if hp_pos and week:
                 p_pos = pos_packet(dayhour, hp_pos, week)
-                t3 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_pos,))
+                t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, keys[loc], p_pos,))
                 t3.start()
 
     finally:
