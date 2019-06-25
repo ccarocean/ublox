@@ -2,6 +2,7 @@ import struct
 
 
 class UBXWriter:
+    """ Class for writing data to the ublox gps receiver. """
     def __init__(self, dev, msg_dict):
         self._dev = dev
         self._sync1 = b'\xb5'
@@ -10,12 +11,14 @@ class UBXWriter:
         self._msg_dict = msg_dict
 
     def write_packet(self, payload, msgid):
+        """ Write packet."""
         buff = struct.pack(b'H', msgid) + struct.pack(b'<H', len(payload)) + payload
         ck_a, ck_b = self.checksum(buff)
         full_packet = self._sync1 + self._sync2 + buff + struct.pack('BB', ck_a, ck_b)
         self._dev.write(full_packet)
 
     def checksum(self, buff):
+        """ Function to create checksum to send to the gps receiver. """
         a, b = 0, 0
         for i in buff:
             a += i

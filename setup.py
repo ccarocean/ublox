@@ -31,7 +31,8 @@ setup(
         'dataclasses;python_version=="3.6"',
         'pyjwt[crypto]',
         'requests',
-        'RPi.GPIO'
+        'RPi.GPIO',
+        'numpy',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

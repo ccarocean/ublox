@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import datetime as dt
 from collections import defaultdict
 
+
+# Table of implemented packets that can be sent and received
 _LOOKUPTABLE = {
     'CFG-INFMSG-UBX_USB':                (0x20920004, 'B'),
     'CFG-INFMSG-UBX_UART1':              (0x20920002, 'B'),
@@ -27,10 +29,14 @@ _LOOKUPTABLE = {
     'CFG-UART1-ENABLED':                 (0x10520005, 'B'),
     'CFG-TXREADY-ENABLED':               (0x10a20001, 'B')
 }
+
+
+# Lookup table for GPS codes
 _LOOKUP_GPS = {0: 'G', 1: 'S', 2: 'E', 3: 'C', 6: 'R'}
 
 
 def str2type(type, string):
+    """ Takes in string and type and returns desired value. """
     if type in {'B', 'b', 'H', 'h', 'l', 'L'}:
         return int(string, 0)
     elif type in {'f', 'd'}:
@@ -39,25 +45,30 @@ def str2type(type, string):
 
 
 def x2bool(num, val):
+    """ Takes in a number of bits and binary value and returns desired bools. """
     return tuple((val & 2**i) != 0 for i in range(num-1, -1, -1))
 
 
 class Packet(ABC):
+    """ Basic packet for inheritance. """
     id = 0x0000
     longname = 'Unknown Packet'
 
 
 class ReceivedPacket(Packet, ABC):
+    """ Received packet for inheritance. """
     pass
 
 
 class SendPacket(Packet, ABC):
+    """ Send packet for inheritance. """
     @abstractmethod
     def payload(self) -> bytes:
         pass
 
 
 class UnknownPacket(ReceivedPacket):
+    """ Class to represent a received packet that is not implemented in our software. """
     longname = "Unknown packet"
 
     def __init__(self, id, payload):
@@ -77,6 +88,7 @@ class UnknownPacket(ReceivedPacket):
 
 
 class AckAck(ReceivedPacket):
+    """ Packet to show acknowledgement of reception of packet by GPS. """
     id = 0x0150
     longname = "Message acknowledged from GPS"
 
@@ -93,6 +105,7 @@ class AckAck(ReceivedPacket):
 
 
 class AckNak(ReceivedPacket):
+    """ Packet to show GPS did not acknowledge a packet it received. """
     id = 0x0005
     longname = "Message not acknowledged from GPS"
 
@@ -109,6 +122,7 @@ class AckNak(ReceivedPacket):
 
 
 class CfgValgetSend(SendPacket):
+    """ Send Packet to get current configuration values. """
     id = 0x8B06
     longname = 'Get current configuration values'
 
@@ -130,6 +144,7 @@ class CfgValgetSend(SendPacket):
 
 
 class CfgValsetSend(SendPacket):
+    """ Send Packet to set configuration values. """
     id = 0x8A06
     longname = 'Set configuration values'
 
@@ -146,6 +161,7 @@ class CfgValsetSend(SendPacket):
 
 
 class CfgValgetRec(ReceivedPacket):
+    """ Receive packet to get current configuration values. """
     id = 0x8B06
     longname = 'Received current configuration values'
 
@@ -171,6 +187,7 @@ class CfgValgetRec(ReceivedPacket):
 
 
 class InfDebug(ReceivedPacket):
+    """ Receive debugging message. """
     id = 0x0404
     longname = 'Debugging message'
 
@@ -183,6 +200,7 @@ class InfDebug(ReceivedPacket):
 
 
 class InfError(ReceivedPacket):
+    """ Receive error message. """
     id = 0x0004
     longname = 'Error message'
 
@@ -195,6 +213,7 @@ class InfError(ReceivedPacket):
 
 
 class InfNotice(ReceivedPacket):
+    """ Receive notice message. """
     id = 0x0204
     longname = 'Notice message'
 
@@ -207,6 +226,7 @@ class InfNotice(ReceivedPacket):
 
 
 class InfTest(ReceivedPacket):
+    """ Receive testing message. """
     id = 0x0304
     longname = 'Testing message'
 
@@ -219,6 +239,7 @@ class InfTest(ReceivedPacket):
 
 
 class InfWarning(ReceivedPacket):
+    """ Receive warning message. """
     id = 0x0104
     longname = 'Warning message'
 
@@ -231,6 +252,7 @@ class InfWarning(ReceivedPacket):
 
 
 class NavHPPOSLLH(ReceivedPacket):
+    """ Receive packet with high precision godetic positon solution from GPS. """
     id = 0x1401
     longname = 'High precision geodetic position solution'
 
@@ -283,6 +305,7 @@ class NavHPPOSLLH(ReceivedPacket):
 
 # Receive clock data from GPS
 class NavTimeUTC(ReceivedPacket):
+    """ Receive packet with the utc time solution from the gps. """
     id = 0x2101
     longname = 'UTC Time Solution'
 
@@ -371,6 +394,7 @@ class NavTimeUTC(ReceivedPacket):
 
 @dataclass(frozen=True)
 class RxmRawxData:
+    """ Dataclass for data from each satellite. """
     prMeas: float
     cpMeas: float
     doMeas: float
@@ -391,6 +415,7 @@ class RxmRawxData:
 
 
 class RxmRawx(ReceivedPacket):
+    """ Receive packet for raw GPS data from multiple GNSS types. """
     id = 0x1502
     longname = 'Multi GNSS raw measurement data'
 

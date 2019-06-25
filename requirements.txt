@@ -3,3 +3,4 @@ dataclasses;python_version=="3.6"
 pyjwt[crypto]
 requests
 RPi.GPIO
+numpy
