@@ -33,7 +33,6 @@ def raw_packet(dayhour, messages):
     time_header = int((dayhour - dt.datetime(1970, 1, 1)).total_seconds())  # Hour to be put at beginning of packet
     packet = struct.pack('<q', time_header)
     for i in messages:  # For each data point in minute of data
-        print(i.rcvTow)
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
             cno = min(max(int(j.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
