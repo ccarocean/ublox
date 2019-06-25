@@ -91,8 +91,8 @@ def main():
             print('End: ', end)
             raw, hp_pos, t = next_raw, next_pos, []  # Initialization of vectors
             next_raw, next_pos = [], []
+            prev_raw, prev_pos = 0, 0
             while dt.datetime.utcnow() < end:
-                prev_raw, prev_pos = 0, 0
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
@@ -106,7 +106,7 @@ def main():
                         next_raw.append(packet)
                         break
                 elif isinstance(packet, NavHPPOSLLH):  # If high precision gps position packet
-                    mod_pos = (packet.iTOW * 1000) % 60
+                    mod_pos = (packet.iTOW / 1000) % 60
                     print(mod_pos, prev_pos)
                     if mod_pos > prev_pos:
                         hp_pos.append(packet)
