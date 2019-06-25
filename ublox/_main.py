@@ -99,7 +99,6 @@ def main():
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
                     mod_raw = (packet.rcvTow - packet.leapS) % 60
-                    print(mod_raw, prev_raw)
                     if mod_raw > prev_raw:
                         raw.append(packet)
                         week = packet.week
@@ -110,7 +109,6 @@ def main():
                         break
                 elif isinstance(packet, NavHPPOSLLH):  # If high precision gps position packet
                     mod_pos = ((packet.iTOW / 1000) - leapS) % 60
-                    print(mod_pos, prev_pos)
                     if mod_pos > prev_pos:
                         hp_pos.append(packet)
                         prev_pos = mod_pos
