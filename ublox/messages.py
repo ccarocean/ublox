@@ -271,7 +271,7 @@ class NavHPPOSLLH(ReceivedPacket):
                f'Latitude:           {self.lat}±{self.hAcc}\n' \
                f'Longitude:          {self.lon}±{self.hAcc}\n' \
                f'Height above Geoid: {self.height}±{self.vAcc}\n' \
-               f'Height aove MSL:    {self.hMSL}±{self.vAcc}\n' \
+               f'Height above MSL:   {self.hMSL}±{self.vAcc}\n' \
                f'iTOW (millisecond time of week): {self.iTOW}\n'
 
     @property

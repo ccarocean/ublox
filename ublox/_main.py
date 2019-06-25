@@ -77,6 +77,9 @@ def main():
     week = False
     led = LED(21)  # LED class initialization
     led.switch()  # Turn on LED
+
+    next_raw, next_pos = [], []
+
     try:
         while True:
             led_timer = dt.datetime.utcnow()
@@ -86,15 +89,29 @@ def main():
             end = min + dt.timedelta(minutes=1)  # End of minute to collect data for single packet
             print('Now: ', now)
             print('End: ', end)
-            raw, hp_pos, t = [], [], []  # Initialization of vectors
+            raw, hp_pos, t = next_raw, next_pos, []  # Initialization of vectors
+            next_raw, next_pos = [], []
             while dt.datetime.utcnow() < end:
+                prev_raw, prev_pos = 0, 0
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
-                    raw.append(packet)
-                    week = packet.week
+                    mod_raw = (packet.rcvTow - packet.leapS) % 60
+                    if mod_raw > prev_raw:
+                        raw.append(packet)
+                        week = packet.week
+                        prev_raw = mod_raw
+                    else: 
+                        next_raw.append(packet)
+                        break
                 elif isinstance(packet, NavHPPOSLLH):  # If high precision gps position packet
-                    hp_pos.append(packet)
+                    mod_pos = packet.iTOW % 60
+                    if mod_pos > prev_pos:
+                        hp_pos.append(packet)
+                        prev_pos = mod_pos
+                    else:
+                        next_pos.append(packet)
+                        break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     # TODO: Set system Time
                     t.append(packet)
