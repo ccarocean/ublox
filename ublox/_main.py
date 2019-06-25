@@ -75,7 +75,7 @@ def main():
     loc = args.location
     keys = {'harv': read_key('../lidar-read/harv.key')}  # Dictionary of keys
     week = False
-    led = LED(15)  # LED class initialization
+    led = LED(21)  # LED class initialization
     led.switch()  # Turn on LED
     try:
         while True:
