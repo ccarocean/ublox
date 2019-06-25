@@ -132,7 +132,7 @@ def main():
                 t2.start()
 
             if hp_pos and week:
-                p_pos = pos_packet(dayhour, hp_pos, week)
+                p_pos = pos_packet(dayhour, hp_pos, week, leapS)
                 t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, keys[loc], p_pos,))
                 t3.start()
 
