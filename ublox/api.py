@@ -49,7 +49,7 @@ def raw_packet(dayhour, messages):
 def pos_packet(dayhour, messages, week, leapS):
     """ This functon creates a packet from the high precision position data to be sent to the web server. It only sends
         one averaged packet per minute. """
-    itow = int(np.mean([i.iTOW for i in messages]) - 18)  # GPS time of week average
+    itow = int(np.mean([i.iTOW for i in messages]) - leapS*1000)  # GPS time of week average
     lon = np.mean([i.lon for i in messages])  # longitude average
     lat = np.mean([i.lat for i in messages])  # latitude average
     height = np.mean([i.height for i in messages])  # Height above ellipsoid average
