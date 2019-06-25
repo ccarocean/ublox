@@ -80,6 +80,8 @@ def main():
 
     next_raw, next_pos = [], []
 
+    leapS = 18
+
     try:
         while True:
             led_timer = dt.datetime.utcnow()
@@ -101,12 +103,13 @@ def main():
                     if mod_raw > prev_raw:
                         raw.append(packet)
                         week = packet.week
+                        leapS = packet.leapS
                         prev_raw = mod_raw
                     else:
                         next_raw.append(packet)
                         break
                 elif isinstance(packet, NavHPPOSLLH):  # If high precision gps position packet
-                    mod_pos = (packet.iTOW / 1000) % 60
+                    mod_pos = ((packet.iTOW / 1000) - leapS) % 60
                     print(mod_pos, prev_pos)
                     if mod_pos > prev_pos:
                         hp_pos.append(packet)
