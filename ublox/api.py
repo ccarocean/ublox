@@ -32,9 +32,9 @@ def raw_packet(dayhour, messages):
     """ This function creates a packet from the raw data to be sent to the web server. """
     time_header = int((dayhour - dt.datetime(1970, 1, 1)).total_seconds())  # Hour to be put at beginning of packet
     packet = struct.pack('<q', time_header)
-    data = b''
     for i in messages:  # For each data point in minute of data
-        data = data + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
+        print(i.rcvTow)
+        packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
             cno = min(max(int(j.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
             # Create 2 byte data value with four values combined:
@@ -44,8 +44,7 @@ def raw_packet(dayhour, messages):
             #       Next three bits:                        sigId
             #       Next three bits:                        signal to noise ratio transformed to integer between 1 and 9
             other = ((j.gnssId & 0x07) << 12) | ((j.svId & 0x3f) << 6) | ((j.sigId & 0x07) << 3) | (cno & 0x07)
-            data = data + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)  # Pack all data for each satellite
-        packet = packet + data  # Combine whole packet
+            packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)  # Pack all data for each satellite
     return packet
 
 

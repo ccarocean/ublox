@@ -107,8 +107,6 @@ def main():
             # Get packets to send and start threads to send packets through api
             print("Packet sending at", dt.datetime.utcnow())
             if raw:
-                for i in raw:
-                    print(i.rcvTow)
                 p_raw = raw_packet(dayhour, raw)
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
                 t2.start()
