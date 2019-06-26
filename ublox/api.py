@@ -9,8 +9,7 @@ import os
 def call_send(url, key, data):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
     count = 0
-    fname = '/home/ccaruser/not-sent/' + url[-6:] + '.bin'
-    print(url)
+    fname = '/home/ccaruser/not-sent/' + url[-11:-5] + '.bin'
     while not send(url, key, data) and count < 100:
         count += 1
     if count == 100:
