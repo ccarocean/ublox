@@ -1,6 +1,7 @@
 import serial
 import datetime as dt
 import argparse
+import sys
 from configparser import ConfigParser
 from threading import Thread
 from .ublox_reader import UBXReader
@@ -16,16 +17,18 @@ from .led import LED
 
 def read_key(fname):
     """ Function for reading private key for a given location. """
-    with open(fname, 'r') as f:
-        key = f.read()
+    try:
+        with open(fname, 'r') as f:
+            key = f.read()
+    except FileNotFoundError:
+        print("Bad key location. ")
+        sys.exit(0)
     return key
 
 
 def main():
     port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     url = ' http://127.0.0.1:5000/'  # Temporary web server path - this will be updated with cods eventually
-    comm_type = 'USB'  # Type of communication for reading config file. This will eventually be UART
-    cfile = 'default.ini'  # Default configuration file
     msg_dict = {NavTimeUTC.id: NavTimeUTC,
                 NavHPPOSLLH.id: NavHPPOSLLH,
                 AckAck.id: AckAck,
@@ -40,13 +43,14 @@ def main():
 
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--comm', type=str, default=comm_type,
-                        help='Communication type ("USB" or "UART"). Default is "' + comm_type + '"')
-    parser.add_argument('-f', '--configfile', type=str, default=cfile,
-                        help='Location of configuration file to use. Default is "' + cfile + '"')
+    parser.add_argument('-c', '--comm', type=str, default="USB",
+                        help='Communication type ("USB" or "UART"). Default is "USB"')
+    parser.add_argument('-f', '--configfile', type=str, default='default.ini',
+                        help='Location of configuration file to use. Default is "default.ini"')
     parser.add_argument('-p', '--port', type=str, default=port,
                         help='Port where GPS is connected. Default is: \n"' + port + '"')
-    parser.add_argument('-l', '--location', type=str, default='harv', help='GPS location. Default is harv.')
+    parser.add_argument('-l', '--location', type=str, default='harv', help='GPS location. Default is "harv"')
+    parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
     args = parser.parse_args()
 
     dev = serial.Serial(args.port,
@@ -74,13 +78,13 @@ def main():
     # Read packets
     loc = args.location
     keys = {'harv': read_key('../lidar-read/harv.key')}  # Dictionary of keys
-    week = False
-    led = LED(21)  # LED class initialization
+    led = LED(args.led)  # LED class initialization
     led.switch()  # Turn on LED
 
     next_raw, next_pos = [], []
 
-    leapS = 18
+    leapS = None
+    week = None
 
     try:
         while True:
@@ -91,7 +95,7 @@ def main():
             end = min + dt.timedelta(minutes=1)  # End of minute to collect data for single packet
             print('Now: ', now)
             print('End: ', end)
-            raw, hp_pos, t = next_raw, next_pos, []  # Initialization of vectors
+            raw, hp_pos = next_raw, next_pos  # Initialization of vectors
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while dt.datetime.utcnow() < end:
@@ -107,7 +111,7 @@ def main():
                     else:
                         next_raw.append(packet)
                         break
-                elif isinstance(packet, NavHPPOSLLH):  # If high precision gps position packet
+                elif isinstance(packet, NavHPPOSLLH) and leapS:  # If high precision gps position packet
                     mod_pos = ((packet.iTOW / 1000) - leapS) % 60
                     if mod_pos > prev_pos:
                         hp_pos.append(packet)
@@ -117,12 +121,12 @@ def main():
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     # TODO: Set system Time
-                    t.append(packet)
+                    pass
                 else:
                     pass
-                if (dt.datetime.now() - led_timer).total_seconds() >= 1:  # Switch led every second
+                if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
                     led.switch()
-                    led_timer = dt.datetime.now()
+                    led_timer = dt.datetime.utcnow()
 
             # Get packets to send and start threads to send packets through api
             print("Packet sending at", dt.datetime.utcnow())
@@ -131,10 +135,13 @@ def main():
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
                 t2.start()
 
-            if hp_pos and week:
+            if hp_pos and week and leapS:
                 p_pos = pos_packet(dayhour, hp_pos, week, leapS)
                 t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, keys[loc], p_pos,))
                 t3.start()
+
+            # TODO: Save data on raspberry pi
+            # TODO: check what packets did not go through
 
     finally:
         # At the end turn LED off

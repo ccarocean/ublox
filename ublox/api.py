@@ -42,7 +42,8 @@ def raw_packet(dayhour, messages):
             #       Next three bits:                        sigId
             #       Next three bits:                        signal to noise ratio transformed to integer between 1 and 9
             other = ((j.gnssId & 0x07) << 12) | ((j.svId & 0x3f) << 6) | ((j.sigId & 0x07) << 3) | (cno & 0x07)
-            packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)  # Pack all data for each satellite
+            # Pack all data for each satellite
+            packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)
     return packet
 
 
