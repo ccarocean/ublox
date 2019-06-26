@@ -3,12 +3,23 @@ import jwt
 import datetime as dt
 import struct
 import numpy as np
+import sys
 
 
 def call_send(url, key, data):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
-    while not send(url, key, data):
-        pass
+    count = 0
+    fname = '/home/ccaruser/not-sent/' + url[:-6] + '.bin'
+    while not send(url, key, data) and count < 100:
+        count += 1
+    if count == 100:
+        try:
+            with open(fname, 'ba+') as f:
+                f.write(data)
+            print("Failed Connection. Saved to " + fname)
+        except FileNotFoundError:
+            print('Not Sent Directory does not exist. ')
+            sys.exit(0)
 
 
 def send(url, key, data):
@@ -16,7 +27,10 @@ def send(url, key, data):
         This returns true if it receives a 201 code and false if it receives any other code. """
     headers = {"Content-Type": "application/octet-stream",
                "Bearer": sign(key)}
-    upload = requests.post(url, data=data, headers=headers)
+    try:
+        upload = requests.post(url, data=data, headers=headers)
+    except:
+        return False
     if upload.status_code != 201:
         return False
     return True
