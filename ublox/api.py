@@ -3,13 +3,14 @@ import jwt
 import datetime as dt
 import struct
 import numpy as np
-import sys
+import os
 
 
 def call_send(url, key, data):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
     count = 0
-    fname = '/home/ccaruser/not-sent/' + url[:-6] + '.bin'
+    fname = '/home/ccaruser/not-sent/' + url[-6:] + '.bin'
+    print(fname)
     while not send(url, key, data) and count < 100:
         count += 1
     if count == 100:
@@ -19,7 +20,7 @@ def call_send(url, key, data):
             print("Failed Connection. Saved to " + fname)
         except FileNotFoundError:
             print('Not Sent Directory does not exist. ')
-            sys.exit(0)
+            os._exit(1)
 
 
 def send(url, key, data):
