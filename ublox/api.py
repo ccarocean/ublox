@@ -33,16 +33,16 @@ def call_send(url, key, data):
         while ind + n <= len(d):
             n = struct.unpack('<L', d[ind-4:ind])[0]
             count = 0
-            while not send(url, key, d[ind:ind+n]) and count < 100:
+            while not send(url, key, d[ind:ind+n]) and count < 10:
                 count += 1
-            if count == 100:
+            if count == 10:
                 write_unsent(fname, n, d[ind:ind+n])
             ind = ind + n + 4
 
     count = 0
-    while not send(url, key, data) and count < 100:
+    while not send(url, key, data) and count < 10:
         count += 1
-    if count == 100:
+    if count == 10:
         write_unsent(fname, len(data), data)
         print("Failed Connection. Saved to " + fname)
 
