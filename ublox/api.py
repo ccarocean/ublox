@@ -6,20 +6,43 @@ import numpy as np
 import os
 
 
+def write_unsent(fname, l, data):
+    try:
+        with open(fname, 'ab') as f:
+            f.write(struct.pack('<H', l) + data)
+        return False
+    except FileNotFoundError:
+        print('Not Sent Directory does not exist. ')
+        os._exit(1)
+
+
 def call_send(url, key, data):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
     count = 0
     fname = '/home/ccaruser/not-sent/' + url[-11:-5] + '.bin'
+
+    # Check if there is old unsent data
+    with open(fname, 'r+b') as f:
+        d = f.read()
+
+    with open(fname, 'w') as f:
+        f.write('')
+
+    if len(d) > 2:
+        n = struct.unpack('<H', d[0:2])[0]
+        ind = 2
+        while ind + n <= len(d):
+            n = struct.unpack('<H', d[ind-1:ind])[0]
+            while not send(url, key, d[ind:ind+n]) and count < 100:
+                count += 1
+            if count == 100:
+                write_unsent(fname, n, d[ind:ind+n])
+            ind = ind + n + 2
+
     while not send(url, key, data) and count < 100:
         count += 1
     if count == 100:
-        try:
-            with open(fname, 'ba+') as f:
-                f.write(data)
-            print("Failed Connection. Saved to " + fname)
-        except FileNotFoundError:
-            print('Not Sent Directory does not exist. ')
-            os._exit(1)
+        write_unsent(fname, len(data), data)
 
 
 def send(url, key, data):
@@ -42,7 +65,7 @@ def sign(key):
                       algorithm='RS256')
 
 
-def raw_packet(dayhour, messages):
+def raw_packet(messages):
     """ This function creates a packet from the raw data to be sent to the web server. """
     packet = b''
     for i in messages:  # For each data point in minute of data
@@ -61,7 +84,7 @@ def raw_packet(dayhour, messages):
     return packet
 
 
-def pos_packet(dayhour, messages, week, leapS):
+def pos_packet(messages, week, leapS):
     """ This functon creates a packet from the high precision position data to be sent to the web server. It only sends
         one averaged packet per minute. """
     itow = int(np.mean([i.iTOW for i in messages]) - leapS*1000)  # GPS time of week average

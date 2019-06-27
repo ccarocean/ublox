@@ -86,19 +86,15 @@ def main():
     leapS = None
     week = None
 
+    print('Starting at:', dt.datetime.utcnow())
+
     try:
         while True:
             led_timer = dt.datetime.utcnow()
-            now = dt.datetime.utcnow()
-            min = dt.datetime(now.year, now.month, now.day, now.hour, now.minute)  # Datetime of minute
-            dayhour = dt.datetime(now.year, now.month, now.day, now.hour)  # Datetime of day with hour
-            end = min + dt.timedelta(minutes=1)  # End of minute to collect data for single packet
-            print('Now: ', now)
-            print('End: ', end)
             raw, hp_pos = next_raw, next_pos  # Initialization of vectors
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
-            while dt.datetime.utcnow() < end:
+            while True:
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
@@ -131,12 +127,12 @@ def main():
             # Get packets to send and start threads to send packets through api
             print("Packet sending at", dt.datetime.utcnow())
             if raw:
-                p_raw = raw_packet(dayhour, raw)
+                p_raw = raw_packet(raw)
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
                 t2.start()
 
             if hp_pos and week and leapS:
-                p_pos = pos_packet(dayhour, hp_pos, week, leapS)
+                p_pos = pos_packet(hp_pos, week, leapS)
                 t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, keys[loc], p_pos,))
                 t3.start()
 
