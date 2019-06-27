@@ -73,16 +73,17 @@ def raw_packet(messages):
     for i in messages:  # For each data point in minute of data
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
-            cno = min(max(int(j.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
-            # Create 2 byte data value with four values combined:
-            #       Most significant bit:                   Not used
-            #       Next three most significant bits:       gnssId
-            #       Next 6 bits:                            svId
-            #       Next three bits:                        sigId
-            #       Next three bits:                        signal to noise ratio transformed to integer between 1 and 9
-            other = ((j.gnssId & 0x07) << 12) | ((j.svId & 0x3f) << 6) | ((j.sigId & 0x07) << 3) | (cno & 0x07)
-            # Pack all data for each satellite
-            packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)
+            for k in j:
+                cno = min(max(int(j.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
+                # Create 2 byte data value with four values combined:
+                #       Most significant bit:                   Not used
+                #       Next three most significant bits:       gnssId
+                #       Next 6 bits:                            svId
+                #       Next three bits:                        sigId
+                #       Next three bits:                        signal to noise ratio transformed to integer between 1 and 9
+                other = ((j.gnssId & 0x07) << 12) | ((j.svId & 0x3f) << 6) | ((j.sigId & 0x07) << 3) | (cno & 0x07)
+                # Pack all data for each satellite
+                packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)
     return packet
 
 
