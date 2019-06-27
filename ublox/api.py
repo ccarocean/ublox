@@ -32,7 +32,7 @@ def call_send(url, key, data):
         n = struct.unpack('<H', d[0:2])[0]
         ind = 2
         while ind + n <= len(d):
-            n = struct.unpack('<H', d[ind-1:ind])[0]
+            n = struct.unpack('<H', d[ind-2:ind])[0]
             while not send(url, key, d[ind:ind+n]) and count < 100:
                 count += 1
             if count == 100:
