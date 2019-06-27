@@ -10,6 +10,7 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
                       InfTest, InfWarning, CfgValsetSend
 from .api import call_send, pos_packet, raw_packet
 from .led import LED
+from .save import save_raw_gps, save_gps_pos
 
 # DOWNLOAD EPHEMERIS: (2019 is year, 168 is day of year, 0 means daily, 19 is year, and n means navigation)
 # wget ftp://cddis.nasa.gov/gnss/data/hourly/2019/168/hour1680.19n.Z
@@ -24,6 +25,16 @@ def read_key(fname):
         print("Bad key location. ")
         sys.exit(0)
     return key
+
+
+# Station lookup
+_STATIONS = {'harv': {'public-key':   read_key('../lidar-read/harv.key.pub'),
+                      'private-key':  read_key('../lidar-read/harv.key'),
+                      'lat':          34.468333,
+                      'lon':          360 - 120.671667,
+                      'alt':          0
+                      }
+             }
 
 
 def main():
@@ -86,6 +97,8 @@ def main():
     leapS = None
     week = None
 
+    data_dir = '/home/ccaruser/data2'
+
     print('Starting at:', dt.datetime.utcnow())
 
     try:
@@ -128,16 +141,23 @@ def main():
 
             if raw:
                 p_raw = raw_packet(raw)
-                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
+
+                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
                 t2.start()
+
+                t3 = Thread(target=save_raw_gps, ags=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
+                                                      _STATIONS[loc]['alt'],))
+                t3.start()
 
             if hp_pos and week and leapS:
                 p_pos = pos_packet(hp_pos, week, leapS)
-                t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, keys[loc], p_pos,))
-                t3.start()
+                t4 = Thread(target=call_send, args=(url + 'posgps/' + loc, _STATIONS[loc]['private-key'], p_pos,))
+                t4.start()
+
+                t5 = Thread(target=save_gps_pos, args=(p_pos, data_dir, loc,))
+                t5.start()
 
             # TODO: Save data on raspberry pi
-            # TODO: check what packets did not go through
 
     finally:
         # At the end turn LED off
