@@ -43,6 +43,7 @@ def call_send(url, key, data):
         count += 1
     if count == 100:
         write_unsent(fname, len(data), data)
+        print("Failed Connection. Saved to " + fname)
 
 
 def send(url, key, data):
@@ -56,6 +57,7 @@ def send(url, key, data):
         return False
     if upload.status_code != 201:
         return False
+    print("Packet sent at", dt.datetime.utcnow())
     return True
 
 

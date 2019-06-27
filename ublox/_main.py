@@ -125,7 +125,7 @@ def main():
                     led_timer = dt.datetime.utcnow()
 
             # Get packets to send and start threads to send packets through api
-            print("Packet sending at", dt.datetime.utcnow())
+
             if raw:
                 p_raw = raw_packet(raw)
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, keys[loc], p_raw,))
