@@ -74,16 +74,16 @@ def raw_packet(messages):
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
             for k in j:
-                cno = min(max(int(j.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
+                cno = min(max(int(k.cno/6), 1), 9)  # Turn SNR into integer from 1 to 9
                 # Create 2 byte data value with four values combined:
-                #       Most significant bit:                   Not used
-                #       Next three most significant bits:       gnssId
-                #       Next 6 bits:                            svId
-                #       Next three bits:                        sigId
-                #       Next three bits:                        signal to noise ratio transformed to integer between 1 and 9
-                other = ((j.gnssId & 0x07) << 12) | ((j.svId & 0x3f) << 6) | ((j.sigId & 0x07) << 3) | (cno & 0x07)
+                #       Most significant bit:               Not used
+                #       Next three most significant bits:   gnssId
+                #       Next 6 bits:                        svId
+                #       Next three bits:                    sigId
+                #       Next three bits:                    signal to noise ratio transformed to integer between 1 and 9
+                other = ((k.gnssId & 0x07) << 12) | ((k.svId & 0x3f) << 6) | ((k.sigId & 0x07) << 3) | (cno & 0x07)
                 # Pack all data for each satellite
-                packet = packet + struct.pack('<ddfH', j.prMeas, j.cpMeas, j.doMeas, other)
+                packet = packet + struct.pack('<ddfH', k.prMeas, k.cpMeas, k.doMeas, other)
     return packet
 
 
