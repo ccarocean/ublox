@@ -9,7 +9,7 @@ import os
 def write_unsent(fname, l, data):
     try:
         with open(fname, 'ab') as f:
-            f.write(struct.pack('<H', l) + data)
+            f.write(struct.pack('<L', l) + data)
         return False
     except FileNotFoundError:
         print('Not Sent Directory does not exist. ')
@@ -28,16 +28,16 @@ def call_send(url, key, data):
     with open(fname, 'w') as f:
         f.write('')
 
-    if len(d) > 2:
-        n = struct.unpack('<H', d[0:2])[0]
-        ind = 2
+    if len(d) > 4:
+        ind = 4
+        n = struct.unpack('<L', d[0:4])[0]
         while ind + n <= len(d):
-            n = struct.unpack('<H', d[ind-2:ind])[0]
+            n = struct.unpack('<L', d[ind-4:ind])[0]
             while not send(url, key, d[ind:ind+n]) and count < 100:
                 count += 1
             if count == 100:
                 write_unsent(fname, n, d[ind:ind+n])
-            ind = ind + n + 2
+            ind = ind + n + 4
 
     while not send(url, key, data) and count < 100:
         count += 1
