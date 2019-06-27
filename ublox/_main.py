@@ -145,7 +145,7 @@ def main():
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
                 t2.start()
 
-                t3 = Thread(target=save_raw_gps, ags=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
+                t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
                                                       _STATIONS[loc]['alt'],))
                 t3.start()
 
