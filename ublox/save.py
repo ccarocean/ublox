@@ -11,6 +11,7 @@ def save_raw_gps(packets, data_directory, loc, lat, lon, alt):
                       packets[0].leapS, loc)
     for p in packets:
         wrtr.write_data(p)
+    print('Raw GPS data saved locally. ')
 
 
 def save_gps_pos(data, data_directory, loc):
@@ -29,3 +30,4 @@ def save_gps_pos(data, data_directory, loc):
     except FileNotFoundError:
         print('Data directory is bad. Try again. ')
         sys.exit(0)
+    print('GPS position data saved locally. ')
