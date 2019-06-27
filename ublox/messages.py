@@ -498,4 +498,4 @@ class RxmRawx(ReceivedPacket):
 
     @property
     def satellites(self):
-        return [sat for sublist in self._satellites for sat in sublist]
+        return self._satellites
