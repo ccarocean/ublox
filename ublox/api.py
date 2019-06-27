@@ -21,7 +21,7 @@ def call_send(url, key, data):
     fname = '/home/ccaruser/not-sent/' + url[-11:-5] + '.bin'
 
     # Check if there is old unsent data
-    with open(fname, 'r+b') as f:
+    with open(fname, 'rb') as f:
         d = f.read()
 
     with open(fname, 'w') as f:
