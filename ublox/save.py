@@ -6,7 +6,7 @@ from .output import fix_hppos, RinexWrite
 
 def save_raw_gps(packets, data_directory, loc, lat, lon, alt):
     """ Function for saving raw GPS data to a file. """
-    wrtr = RinexWrite(os.path.join(data_directory, loc, 'rawgps'), lat, lon, alt, packets[0].week, packets[0].rcvTow,
+    wrtr = RinexWrite(os.path.join(data_directory, 'rawgps'), lat, lon, alt, packets[0].week, packets[0].rcvTow,
                       packets[0].leapS, loc)
     for p in packets:
         wrtr.write_data(p)
