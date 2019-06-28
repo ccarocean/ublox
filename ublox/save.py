@@ -1,7 +1,6 @@
 import datetime as dt
 import os
 import struct
-import sys
 from .output import fix_hppos, RinexWrite
 
 
@@ -21,7 +20,7 @@ def save_gps_pos(data, data_directory, loc):
         return
     itow, week, lon, lat, height = struct.unpack('<IHddd', data)
     t = dt.datetime(1980, 1, 6) + dt.timedelta(days=7*week, microseconds=itow*1000)
-    fname = os.path.join(data_directory, loc, 'position', t.strftime('%Y-%m-%d.txt'))
+    fname = os.path.join(data_directory, 'position', t.strftime('%Y-%m-%d.txt'))
     if os.path.isfile(fname):  # If file exists make sure it doesnt need to be fixed
         fix_hppos(fname)
     try:
@@ -29,5 +28,5 @@ def save_gps_pos(data, data_directory, loc):
             f.write(f'{t} {lat} {lon} {height}\n')  # Write
     except FileNotFoundError:
         print('Data directory is bad. Try again. ')
-        sys.exit(0)
+        os._exit(1)
     print('GPS position data saved locally. ')
