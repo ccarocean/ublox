@@ -142,12 +142,12 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
 
-                #t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
-                #t2.start()
+                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
+                t2.start()
 
-                t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
+                #t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
                                                       _STATIONS[loc]['alt'],))
-                t3.start()
+                #t3.start()
 
             if hp_pos and week and leapS:
                 p_pos = pos_packet(hp_pos, week, leapS)
