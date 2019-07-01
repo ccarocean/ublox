@@ -142,8 +142,8 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
 
-                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
-                t2.start()
+                #t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
+                #t2.start()
 
                 t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
                                                       _STATIONS[loc]['alt'],))
