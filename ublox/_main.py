@@ -88,7 +88,7 @@ def main():
 
     # Read packets
     loc = args.location
-    keys = {'harv': read_key('../lidar-read/harv.key')}  # Dictionary of keys
+    key = read_key('/home/ccaruser/.keys/' + loc + '.key')  # Dictionary of keys
     led = LED(args.led)  # LED class initialization
     led.switch()  # Turn on LED
 
@@ -142,7 +142,7 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
 
-                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, _STATIONS[loc]['private-key'], p_raw,))
+                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,))
                 t2.start()
 
                 t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
@@ -151,13 +151,11 @@ def main():
 
             if hp_pos and week and leapS:
                 p_pos = pos_packet(hp_pos, week, leapS)
-                t4 = Thread(target=call_send, args=(url + 'posgps/' + loc, _STATIONS[loc]['private-key'], p_pos,))
+                t4 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,))
                 t4.start()
 
                 t5 = Thread(target=save_gps_pos, args=(p_pos, data_dir, loc,))
                 t5.start()
-
-            # TODO: Save data on raspberry pi
 
     finally:
         # At the end turn LED off

@@ -35,7 +35,6 @@ Run as root:
 .. code-block::
 
     sudo .venv/bin/python -m ublox
-    sudo ublox
 
 
 Related Files
