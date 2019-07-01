@@ -27,16 +27,6 @@ def read_key(fname):
     return key
 
 
-# Station lookup
-_STATIONS = {'harv': {'public-key':   read_key('../lidar-read/harv.key.pub'),
-                      'private-key':  read_key('../lidar-read/harv.key'),
-                      'lat':          34.468333,
-                      'lon':          360 - 120.671667,
-                      'alt':          0
-                      }
-             }
-
-
 def main():
     port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     url = ' http://127.0.0.1:5000/'  # Temporary web server path - this will be updated with cods eventually
@@ -90,7 +80,7 @@ def main():
     loc = args.location
     key = read_key('/home/ccaruser/.keys/' + loc + '.key')  # Dictionary of keys
     led = LED(args.led)  # LED class initialization
-    led.switch()  # Turn on LED
+    led.set_high()  # Turn on LED
 
     next_raw, next_pos = [], []
 
@@ -145,17 +135,17 @@ def main():
                 t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,))
                 t2.start()
 
-                t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
-                                                      _STATIONS[loc]['alt'],))
-                t3.start()
+                #t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
+                #                                      _STATIONS[loc]['alt'],))
+                #t3.start()
 
             if hp_pos and week and leapS:
                 p_pos = pos_packet(hp_pos, week, leapS)
                 t4 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,))
                 t4.start()
 
-                t5 = Thread(target=save_gps_pos, args=(p_pos, data_dir, loc,))
-                t5.start()
+                #t5 = Thread(target=save_gps_pos, args=(p_pos, data_dir, loc,))
+                #t5.start()
 
     finally:
         # At the end turn LED off
