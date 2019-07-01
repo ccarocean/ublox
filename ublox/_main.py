@@ -146,7 +146,7 @@ def main():
                 t2.start()
 
                 #t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
-                                                      _STATIONS[loc]['alt'],))
+                #                                      _STATIONS[loc]['alt'],))
                 #t3.start()
 
             if hp_pos and week and leapS:
