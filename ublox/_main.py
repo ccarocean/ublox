@@ -2,6 +2,7 @@ import serial
 import datetime as dt
 import argparse
 import sys
+import diskcache as dc
 from configparser import ConfigParser
 from threading import Thread
 from .ublox_reader import UBXReader
@@ -10,7 +11,6 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
                       InfTest, InfWarning, CfgValsetSend
 from .api import call_send, pos_packet, raw_packet
 from .led import LED
-from .save import save_raw_gps, save_gps_pos
 
 # DOWNLOAD EPHEMERIS: (2019 is year, 168 is day of year, 0 means daily, 19 is year, and n means navigation)
 # wget ftp://cddis.nasa.gov/gnss/data/hourly/2019/168/hour1680.19n.Z
@@ -78,7 +78,7 @@ def main():
 
     # Read packets
     loc = args.location
-    key = read_key('/home/ccaruser/.keys/' + loc + '.key')  # Dictionary of keys
+    key = read_key('/home/ccaruser/.keys/' + loc + '.key')  # Private key for sending
     led = LED(args.led)  # LED class initialization
     led.set_high()  # Turn on LED
 
@@ -87,7 +87,8 @@ def main():
     leapS = None
     week = None
 
-    data_dir = '/home/ccaruser/data2'
+    cache_raw = dc.Cache('/var/tmp/unsent_gpsraw')
+    cache_pos = dc.Cache('/var/tmp/unsent_gpspos')
 
     print('Starting at:', dt.datetime.utcnow())
 
@@ -132,20 +133,16 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
 
-                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,))
+                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
+                                                    (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
+                                                    cache_raw))
                 t2.start()
-
-                #t3 = Thread(target=save_raw_gps, args=(raw, data_dir, loc, _STATIONS[loc]['lat'], _STATIONS[loc]['lon'],
-                #                                      _STATIONS[loc]['alt'],))
-                #t3.start()
-
             if hp_pos and week and leapS:
                 p_pos = pos_packet(hp_pos, week, leapS)
-                t4 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,))
-                t4.start()
-
-                #t5 = Thread(target=save_gps_pos, args=(p_pos, data_dir, loc,))
-                #t5.start()
+                t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,
+                                                    (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
+                                                    cache_pos))
+                t3.start()
 
     finally:
         # At the end turn LED off

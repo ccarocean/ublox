@@ -4,3 +4,4 @@ pyjwt[crypto]
 requests
 RPi.GPIO
 numpy
+diskcache

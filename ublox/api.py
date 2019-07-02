@@ -16,33 +16,21 @@ def write_unsent(fname, l, data):
         os._exit(1)
 
 
-def call_send(url, key, data):
+def call_send(url, key, data, t, cache):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
-    fname = '/home/ccaruser/not-sent/' + url[-11:-5] + '.bin'
 
-    # Check if there is old unsent data
-    with open(fname, 'rb') as f:
-        d = f.read()
-
-    with open(fname, 'w') as f:
-        f.write('')
-
-    ind = 4
-    while ind <= len(d):
-        n = struct.unpack('<L', d[ind-4:ind])[0]
+    for i in cache:
         count = 0
-        while not send(url, key, d[ind:ind+n]) and count < 10:
+        while not send(url, key, cache[i]) and count < 10:
             count += 1
-        if count == 10:
-            write_unsent(fname, n, d[ind:ind+n])
-        ind = ind + n + 4
+        if count < 10:
+            del cache[i]
 
     count = 0
     while not send(url, key, data) and count < 10:
         count += 1
     if count == 10:
-        write_unsent(fname, len(data), data)
-        print("Failed Connection. Saved to " + fname)
+        cache[t] = data
 
 
 def send(url, key, data):
