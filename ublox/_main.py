@@ -56,6 +56,8 @@ def main():
     elif args.comm == "UART":
         port = '/dev/ttyAMA0'
 
+    print('a')
+
     dev = serial.Serial(port,
                         timeout=5,
                         baudrate=38400,
@@ -63,11 +65,17 @@ def main():
                         stopbits=serial.STOPBITS_ONE,
                         bytesize=serial.EIGHTBITS)  # Open serial port
 
+    print('b')
+
     # Configure
     config = ConfigParser(inline_comment_prefixes=('#', ';'))
     config.read(args.configfile)  # Read configuration packets to be sent
 
+    print('c')
+
     packet = CfgValsetSend(config[args.comm])  # Create configuration packets
+
+    print('d')
 
     # Write config packet
     wrtr = UBXWriter(dev, msg_dict)  # ublox writer
@@ -77,6 +85,8 @@ def main():
         dev.baudrate = config[args.comm]['CFG-UART1-BAUDRATE']  # Set baud rate to desired rate in configuration file
     except KeyError:  # If there is no baud rate in configuration file
         pass
+
+    print('e')
 
     # Read packets
     loc = args.location
