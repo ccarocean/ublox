@@ -67,7 +67,9 @@ def main():
     config = ConfigParser(inline_comment_prefixes=('#', ';'))
     config.read(args.configfile)  # Read configuration packets to be sent
 
-    print(args.comm)
+    print(config['UART'])
+    print('')
+    print(config['USB'])
 
     packet = CfgValsetSend(config[args.comm])  # Create configuration packets
 
