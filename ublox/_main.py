@@ -67,6 +67,8 @@ def main():
     config = ConfigParser(inline_comment_prefixes=('#', ';'))
     config.read(args.configfile)  # Read configuration packets to be sent
 
+    print(args.comm)
+
     packet = CfgValsetSend(config[args.comm])  # Create configuration packets
 
     # Write config packet
