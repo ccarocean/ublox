@@ -47,6 +47,7 @@ def sign(key):
 def raw_packet(messages):
     """ This function creates a packet from the raw data to be sent to the web server. """
     packet = b''
+    print(messages[-1].week, messages[-1].rcvTow)
     for i in messages:  # For each data point in minute of data
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
@@ -71,5 +72,4 @@ def pos_packet(messages, week, leapS):
     lon = np.mean([i.lon for i in messages])  # longitude average
     lat = np.mean([i.lat for i in messages])  # latitude average
     height = np.mean([i.height for i in messages])  # Height above ellipsoid average
-    print(week, itow)
     return struct.pack('<IHddd', itow, week, lon, lat, height)  # Return packet
