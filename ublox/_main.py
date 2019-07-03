@@ -54,9 +54,7 @@ def main():
     if args.comm == "USB":
         port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     elif args.comm == "UART":
-        port = '/dev/ttyAMA0'
-
-    print('a')
+        port = '/dev/ttyS0'
 
     dev = serial.Serial(port,
                         timeout=5,
@@ -65,17 +63,11 @@ def main():
                         stopbits=serial.STOPBITS_ONE,
                         bytesize=serial.EIGHTBITS)  # Open serial port
 
-    print('b')
-
     # Configure
     config = ConfigParser(inline_comment_prefixes=('#', ';'))
     config.read(args.configfile)  # Read configuration packets to be sent
 
-    print('c')
-
     packet = CfgValsetSend(config[args.comm])  # Create configuration packets
-
-    print('d')
 
     # Write config packet
     wrtr = UBXWriter(dev, msg_dict)  # ublox writer
@@ -86,7 +78,7 @@ def main():
     except KeyError:  # If there is no baud rate in configuration file
         pass
 
-    print('e')
+    print('Configured. ')
 
     # Read packets
     loc = args.location
