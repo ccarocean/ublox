@@ -24,7 +24,7 @@ def call_send(url, key, data, t, cache):
         print('No connection made. Data saved to cache. ')
 
 
-def send(url, key, data):
+def send(url, key, data, s):
     """ Function for sending packet.
         This returns true if it receives a 201 code and false if it receives any other code. """
     headers = {"Content-Type": "application/octet-stream",
