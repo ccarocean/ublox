@@ -66,10 +66,11 @@ def main():
     # Configure
     config = ConfigParser(inline_comment_prefixes=('#', ';'))
     config.read(args.configfile)  # Read configuration packets to be sent
-
-    print(config['UART'].items())
+    for key, val in config['UART'].items():
+        print(key + ': ' + val)
     print('')
-    print(config['USB'].items())
+    for key, val in config['USB'].items():
+        print(key + ': ' + val)
 
     packet = CfgValsetSend(config[args.comm])  # Create configuration packets
 
