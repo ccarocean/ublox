@@ -3,7 +3,6 @@ import jwt
 import datetime as dt
 import struct
 import numpy as np
-import os
 
 
 def call_send(url, key, data, t, cache):

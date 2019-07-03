@@ -28,7 +28,6 @@ def read_key(fname):
 
 
 def main():
-    port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     url = ' http://127.0.0.1:5000/'  # Temporary web server path - this will be updated with cods eventually
     msg_dict = {NavTimeUTC.id: NavTimeUTC,
                 NavHPPOSLLH.id: NavHPPOSLLH,
@@ -48,13 +47,16 @@ def main():
                         help='Communication type ("USB" or "UART"). Default is "USB"')
     parser.add_argument('-f', '--configfile', type=str, default='default.ini',
                         help='Location of configuration file to use. Default is "default.ini"')
-    parser.add_argument('-p', '--port', type=str, default=port,
-                        help='Port where GPS is connected. Default is: \n"' + port + '"')
     parser.add_argument('-l', '--location', type=str, default='harv', help='GPS location. Default is "harv"')
     parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
     args = parser.parse_args()
 
-    dev = serial.Serial(args.port,
+    if args.comm == "USB":
+        port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
+    elif args.comm == "UART":
+        port = '/dev/ttyAMA0'
+
+    dev = serial.Serial(port,
                         timeout=5,
                         baudrate=38400,
                         parity=serial.PARITY_NONE,
