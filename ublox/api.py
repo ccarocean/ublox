@@ -6,16 +6,6 @@ import numpy as np
 import os
 
 
-def write_unsent(fname, l, data):
-    try:
-        with open(fname, 'ab') as f:
-            f.write(struct.pack('<L', l) + data)
-        return False
-    except FileNotFoundError:
-        print('Not Sent Directory does not exist. ')
-        os._exit(1)
-
-
 def call_send(url, key, data, t, cache):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
 
@@ -31,6 +21,7 @@ def call_send(url, key, data, t, cache):
         count += 1
     if count == 10:
         cache[t] = data
+        print('No connection made. Data saved to cache. ')
 
 
 def send(url, key, data):
