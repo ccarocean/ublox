@@ -78,8 +78,6 @@ def main():
     except KeyError:  # If there is no baud rate in configuration file
         pass
 
-    print('Configured. ')
-
     # Read packets
     loc = args.location
     key = read_key('/home/ccaruser/.keys/' + loc + '.key')  # Private key for sending
@@ -103,8 +101,11 @@ def main():
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while True:
+                print('a')
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
+                print('b')
                 packet = rdr.read_packet()  # Read packet
+                print('c')
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
                     mod_raw = (packet.rcvTow - packet.leapS) % 60
                     if mod_raw > prev_raw:
