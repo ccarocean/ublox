@@ -100,7 +100,7 @@ def main():
     # Send old data
     t2 = Thread(target=send_old, args=(cache_raw, url + 'rawgps/' + loc, key))
     t2.start()
-    t3 = Thread(target=call_send, args=(cache_pos, url + 'posgps/' + loc, key))
+    t3 = Thread(target=send_old, args=(cache_pos, url + 'posgps/' + loc, key))
     t3.start()
 
     print('Starting at:', dt.datetime.utcnow())
@@ -152,7 +152,7 @@ def main():
                     t2.start()
                 else:
                     save_to_dc(cache_raw, (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(), p_raw)
-            
+
             if hp_pos and week and leapS and not t3.is_alive():
                 p_pos = pos_packet(hp_pos, week, leapS)
                 if not t3.isAlive():
