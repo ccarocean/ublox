@@ -132,7 +132,7 @@ def main():
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
                     cmd = 'date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"'
-                    os.system(cmd)
+                    #os.system(cmd)
                     # TODO: Set system Time
                     pass
                 else:
