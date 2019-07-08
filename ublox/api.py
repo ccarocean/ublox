@@ -10,7 +10,6 @@ def save_to_dc(cache, t, data):
 
 
 def send_old(cache, url, key):
-    print(url)
     for i in cache:
         count = 0
         while not send(url, key, cache[i], 'Old ') and count < 10:
