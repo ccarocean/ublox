@@ -20,8 +20,8 @@ def send_old(cache, url, key):
 
 def call_send(url, key, data, t, cache):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
+    print(url)
     send_old(cache, url, key)
-
     if data:
         count = 0
         while not send(url, key, data, 'New ') and count < 10:
@@ -55,7 +55,6 @@ def sign(key):
 def raw_packet(messages):
     """ This function creates a packet from the raw data to be sent to the web server. """
     packet = b''
-    print(messages[-1].week, messages[-1].rcvTow)
     for i in messages:  # For each data point in minute of data
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
