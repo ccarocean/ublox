@@ -4,7 +4,14 @@ Title: ublox
 
 Options
 -------
+Required argument:
+    -l LOCATION, --location LOCATION        GPS Location (ex. harv)
 
+Optional arguments:
+    -h, --help                  Show help message and exit
+    -c COMM, --comm COMM        Communication type ("USB" or "UART"). Default is "USB"
+    -f CONFIGFILE, --configfile CONFIGFILE  Location of configuration file. Default is 'default.ini'
+    --led LED                   LED Pin. default is 20
 
 Installation
 ------------
@@ -59,5 +66,4 @@ Purpose
 This program runs on a raspberry pi and reads data from a SparkFun GPS-RTK2 Board with the ZED-F9P GPS chip. It
 initializes the GPS using a specified config file (or default.ini), and can use either UART or USB. It then sends a
 post API request to send the data to the web server located at cods.colorado.edu where the data is stored and analyzed.
-The data is also stored onboard as a backup. The program also blinks an LED to show someone that the program is running
-just by looking at the unit.
+The program also blinks an LED to show someone that the program is running just by looking at the unit.
