@@ -14,10 +14,10 @@ def send_old(cache, url, key):
     for i in cache:
         count = 0
         while not send(url, key, cache[i], 'Old ') and count < 10:
-            print(url, i)
             count += 1
         if count < 10:
             del cache[i]
+            print('Not sent')
 
 
 def call_send(url, key, data, t, cache):
