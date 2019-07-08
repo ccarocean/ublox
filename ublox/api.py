@@ -14,6 +14,7 @@ def send_old(cache, url, key):
     for i in cache:
         count = 0
         while not send(url, key, cache[i], 'Old ') and count < 10:
+            print(url, i)
             count += 1
         if count < 10:
             del cache[i]
@@ -21,7 +22,6 @@ def send_old(cache, url, key):
 
 def call_send(url, key, data, t, cache):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
-    print(url)
     send_old(cache, url, key)
     if data:
         count = 0
