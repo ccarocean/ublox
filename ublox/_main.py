@@ -133,7 +133,6 @@ def main():
                                        packet.sec, packet.nano // 10**3)
                     cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
                     os.system(cmd)
-                    # TODO: Set system Time
                 else:
                     pass
                 if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
