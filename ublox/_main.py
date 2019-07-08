@@ -128,6 +128,9 @@ def main():
                         next_pos.append(packet)
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
+                    time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
+                                       packet.sec + packet.nano * 10**-9)
+                    print(time.strftime('%Y-%m-%d %H:%M:%S UTC'))
                     # TODO: Set system Time
                     pass
                 else:
