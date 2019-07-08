@@ -47,7 +47,7 @@ def main():
                         help='Communication type ("USB" or "UART"). Default is "USB"')
     parser.add_argument('-f', '--configfile', type=str, default='default.ini',
                         help='Location of configuration file to use. Default is "default.ini"')
-    parser.add_argument('-l', '--location', type=str, help='GPS location. (ex. harv)')
+    parser.add_argument('-l', '--location', type=str, help='GPS location. (ex. harv)', required=True)
     parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
     args = parser.parse_args()
 
