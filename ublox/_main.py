@@ -131,10 +131,9 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    cmd = 'date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"'
-                    #os.system(cmd)
+                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"'
+                    os.system(cmd)
                     # TODO: Set system Time
-                    pass
                 else:
                     pass
                 if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
@@ -142,7 +141,6 @@ def main():
                     led_timer = dt.datetime.utcnow()
 
             # Get packets to send and start threads to send packets through api
-
             if raw:
                 p_raw = raw_packet(raw)
                 if not t2.isAlive():
