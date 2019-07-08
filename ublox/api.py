@@ -43,6 +43,7 @@ def send(url, key, data, s):
     except:
         return False
     if upload.status_code != 201:
+        print(upload.status_code)
         return False
     print(s + url[-11:-5].upper() + " Packet sent at", dt.datetime.utcnow())
     return True
