@@ -28,7 +28,7 @@ def read_key(fname):
 
 
 def main():
-    url = 'https://cods.colorado.edu/api/gpslidar/'  # Temporary web server path - this will be updated with cods eventually
+    url = 'https://cods.colorado.edu/api/gpslidar/'
     msg_dict = {NavTimeUTC.id: NavTimeUTC,
                 NavHPPOSLLH.id: NavHPPOSLLH,
                 AckAck.id: AckAck,

@@ -33,6 +33,7 @@ setup(
         'requests',
         'RPi.GPIO',
         'numpy',
+        'diskcache',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
