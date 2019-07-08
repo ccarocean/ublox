@@ -9,7 +9,7 @@ from .ublox_reader import UBXReader
 from .ublox_writer import UBXWriter
 from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, RxmRawx, InfDebug, InfError, InfNotice, \
                       InfTest, InfWarning, CfgValsetSend
-from .api import call_send, pos_packet, raw_packet
+from .api import call_send, pos_packet, raw_packet, save_to_dc, send_old
 from .led import LED
 
 # DOWNLOAD EPHEMERIS: (2019 is year, 168 is day of year, 0 means daily, 19 is year, and n means navigation)
@@ -97,6 +97,12 @@ def main():
     cache_raw = dc.Cache('/var/tmp/unsent_gpsraw')
     cache_pos = dc.Cache('/var/tmp/unsent_gpspos')
 
+    # Send old data
+    t2 = Thread(target=send_old, args=(cache_raw, url + 'rawgps/' + loc, key))
+    t2.start()
+    t3 = Thread(target=call_send, args=(cache_pos, url + 'posgps/' + loc, key))
+    t3.start()
+
     print('Starting at:', dt.datetime.utcnow())
 
     try:
@@ -139,17 +145,23 @@ def main():
 
             if raw:
                 p_raw = raw_packet(raw)
-
-                t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
-                                                    (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
-                                                    cache_raw))
-                t2.start()
-            if hp_pos and week and leapS:
+                if not t2.isAlive():
+                    t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
+                                                        (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
+                                                        cache_raw))
+                    t2.start()
+                else:
+                    save_to_dc(cache_raw, (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(), p_raw)
+            
+            if hp_pos and week and leapS and not t3.is_alive():
                 p_pos = pos_packet(hp_pos, week, leapS)
-                t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,
-                                                    (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
-                                                    cache_pos))
-                t3.start()
+                if not t3.isAlive():
+                    t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,
+                                                        (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
+                                                        cache_pos))
+                    t3.start()
+                else:
+                    save_to_dc(cache_pos, (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(), p_pos)
 
     finally:
         # At the end turn LED off

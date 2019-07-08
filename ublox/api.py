@@ -5,9 +5,11 @@ import struct
 import numpy as np
 
 
-def call_send(url, key, data, t, cache):
-    """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
+def save_to_dc(cache, t, data):
+    cache[bytes(str(t), 'utf-8')] = data
 
+
+def send_old(cache, url, key):
     for i in cache:
         count = 0
         while not send(url, key, cache[i], 'Old ') and count < 10:
@@ -15,12 +17,18 @@ def call_send(url, key, data, t, cache):
         if count < 10:
             del cache[i]
 
-    count = 0
-    while not send(url, key, data, 'New ') and count < 10:
-        count += 1
-    if count == 10:
-        cache[bytes(str(t), 'utf-8')] = data
-        print('No connection made. Data saved to cache. ')
+
+def call_send(url, key, data, t, cache):
+    """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
+    send_old(cache, url, key)
+
+    if data:
+        count = 0
+        while not send(url, key, data, 'New ') and count < 10:
+            count += 1
+        if count == 10:
+            save_to_dc(cache, t, data)
+            print('No connection made. Data saved to cache. ')
 
 
 def send(url, key, data, s):
