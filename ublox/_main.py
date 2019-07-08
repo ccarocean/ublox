@@ -2,6 +2,7 @@ import serial
 import datetime as dt
 import argparse
 import sys
+import os
 import diskcache as dc
 from configparser import ConfigParser
 from threading import Thread
@@ -130,7 +131,8 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    print(time.strftime('%Y-%m-%d %H:%M:%S UTC'))
+                    cmd = 'date -s ' + time.strftime('%Y-%m-%d %H:%M:%S UTC')
+                    os.system(cmd)
                     # TODO: Set system Time
                     pass
                 else:
