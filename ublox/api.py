@@ -17,6 +17,7 @@ def send_old(cache, url, key):
             count += 1
         if count < 10:
             del cache[i]
+        else:
             print('Not sent')
 
 
