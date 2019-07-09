@@ -132,10 +132,9 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    out = subprocess.Popen(['sudo', 'date', '-s', time.strftime('"%Y-%m-%d %H:%M:%SUTC"')],
-                                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    stdout, stderr = out.communicate()
-                    print(stdout)
+                    out = subprocess.run(['sudo', 'date', '-s', time.strftime('"%Y-%m-%d %H:%M:%SUTC"')],
+                                         capture_output=True)
+                    print(out)
                     #cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
                     #os.system(cmd)
                 else:
