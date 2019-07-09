@@ -132,12 +132,8 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    out = subprocess.run(['sudo', 'date', '-s', time.strftime("%Y-%m-%d %H:%M:%SUTC")],
-                                         stdout=subprocess.PIPE)
-                    print(out)
                     cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"' #+ ' > newdate.log'
-                    print(cmd)
-                    #os.system(cmd)
+                    os.system(cmd)
                 else:
                     pass
                 if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
