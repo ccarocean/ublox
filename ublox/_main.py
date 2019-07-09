@@ -3,6 +3,7 @@ import datetime as dt
 import argparse
 import sys
 import os
+import subprocess
 import diskcache as dc
 from configparser import ConfigParser
 from threading import Thread
@@ -131,8 +132,12 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
-                    os.system(cmd)
+                    out = subprocess.Popen(['sudo', 'date', '-s', time.strftime('"%Y-%m-%d %H:%M:%SUTC"')],
+                                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    stdout, stderr = out.communicate()
+                    print(stdout)
+                    #cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
+                    #os.system(cmd)
                 else:
                     pass
                 if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
