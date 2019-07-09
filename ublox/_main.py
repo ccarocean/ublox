@@ -133,7 +133,7 @@ def main():
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
                     out = subprocess.run(['sudo', 'date', '-s', time.strftime('"%Y-%m-%d %H:%M:%SUTC"')],
-                                         capture_output=True)
+                                         stdout=subprocess.PIPE)
                     print(out)
                     #cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
                     #os.system(cmd)
