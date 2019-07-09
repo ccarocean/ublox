@@ -132,7 +132,7 @@ def main():
                 elif isinstance(packet, NavTimeUTC):  # If time packet
                     time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                        packet.sec, packet.nano // 10**3)
-                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"' #+ ' > newdate.log'
+                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"' + ' >> newdate.log'
                     os.system(cmd)
                 else:
                     pass
