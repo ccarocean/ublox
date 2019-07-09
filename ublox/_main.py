@@ -135,7 +135,8 @@ def main():
                     out = subprocess.run(['sudo', 'date', '-s', time.strftime('"%Y-%m-%d %H:%M:%SUTC"')],
                                          stdout=subprocess.PIPE)
                     print(out)
-                    #cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '" > newdate.log'
+                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%SUTC') + '"' #+ ' > newdate.log'
+                    print(cmd)
                     #os.system(cmd)
                 else:
                     pass
