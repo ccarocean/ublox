@@ -16,8 +16,6 @@ def send_old(cache, url, key):
             count += 1
         if count < 10:
             del cache[i]
-        else:
-            print('Not sent')
 
 
 def call_send(url, key, data, t, cache):
@@ -42,7 +40,6 @@ def send(url, key, data, s):
     except:
         return False
     if upload.status_code != 201:
-        print(upload.status_code)
         return False
     print(s + url[-11:-5].upper() + " Packet sent at", dt.datetime.utcnow())
     return True
