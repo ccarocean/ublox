@@ -335,11 +335,6 @@ class NavTimeUTC(ReceivedPacket):
             return dt.datetime(self._year, self._month, self._day, self._hour, self._min, self._sec, self._nano // 1000)
 
     @property
-    def time_j2000(self):
-        return (self.time_dt - dt.datetime(2000, 1, 1, 12)).total_seconds()
-        # TODO: is this right? probably not
-
-    @property
     def iTOW(self):
         return self._iTOW
 
