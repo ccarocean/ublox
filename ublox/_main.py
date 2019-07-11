@@ -3,7 +3,7 @@ import datetime as dt
 import argparse
 import sys
 import os
-import subprocess
+import socket
 import diskcache as dc
 from configparser import ConfigParser
 from threading import Thread
@@ -43,13 +43,16 @@ def main():
                 InfTest.id: InfTest,
                 InfWarning.id: InfWarning}  # Dictionary of implemented packet formats
 
+    def_loc = socket.gethostname()[0:4]
+
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--comm', type=str, default="USB",
                         help='Communication type ("USB" or "UART"). Default is "USB"')
     parser.add_argument('-f', '--configfile', type=str, default='default.ini',
                         help='Location of configuration file to use. Default is "default.ini"')
-    parser.add_argument('-l', '--location', type=str, help='GPS location. (ex. harv)', required=True)
+    parser.add_argument('-l', '--location', type=str, default=def_loc,
+                        help='GPS location. Default is first four letters of hostname (' + def_loc + ')')
     parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
     args = parser.parse_args()
 
