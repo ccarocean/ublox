@@ -60,6 +60,9 @@ def main():
         port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     elif args.comm == "UART":
         port = '/dev/ttyS0'
+    else:
+        print("Bad communication type. ")
+        sys.exit(0)
 
     dev = serial.Serial(port,
                         timeout=5,
@@ -103,7 +106,7 @@ def main():
     t3 = Thread(target=send_old, args=(cache_pos, url + 'posgps/' + loc, key))
     t3.start()
 
-    print('Starting at:', dt.datetime.utcnow())
+    print('Starting ' + loc + ' GPS at:', dt.datetime.utcnow())
 
     try:
         while True:
