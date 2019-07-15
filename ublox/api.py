@@ -55,7 +55,6 @@ def raw_packet(messages):
     """ This function creates a packet from the raw data to be sent to the web server. """
     packet = b''
     for i in messages:  # For each data point in minute of data
-        print(i.week)
         packet = packet + struct.pack('<dHbB', i.rcvTow, i.week, i.leapS, i.numMeas)  # Pack single data point values
         for j in i.satellites:  # For each satellite
             for k in j:
