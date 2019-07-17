@@ -14,9 +14,6 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
 from .api import call_send, pos_packet, raw_packet, save_to_dc, send_old
 from .led import LED
 
-# DOWNLOAD EPHEMERIS: (2019 is year, 168 is day of year, 0 means daily, 19 is year, and n means navigation)
-# wget ftp://cddis.nasa.gov/gnss/data/hourly/2019/168/hour1680.19n.Z
-
 
 def read_key(fname):
     """ Function for reading private key for a given location. """
