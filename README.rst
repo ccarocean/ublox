@@ -44,7 +44,7 @@ Run:
 
 Related Files
 -------------
-- Private key for station must be located in /home/ccaruser/keys
+- Private key for station must be located in /home/ccaruser/.keys
 
 
 Author
