@@ -4,14 +4,12 @@ Title: ublox
 
 Options
 -------
-Required argument:
-    -l LOCATION, --location LOCATION        GPS Location (ex. harv)
-
 Optional arguments:
-    -h, --help                  Show help message and exit
-    -c COMM, --comm COMM        Communication type ("USB" or "UART"). Default is "USB"
+    -h, --help                              Show help message and exit
+    -c COMM, --comm COMM                    Communication type ("USB" or "UART"). Default is "USB"
     -f CONFIGFILE, --configfile CONFIGFILE  Location of configuration file. Default is 'default.ini'
-    --led LED                   LED Pin. default is 20
+    -l LOCATION, --location LOCATION        GPS location. Default is first four letters of hostname (ex. harv)
+    --led LED                               LED Pin. default is 20
 
 Installation
 ------------
@@ -41,14 +39,12 @@ Run:
 
 .. code-block::
 
-    ublox -l <location>
+    ublox
 
 
 Related Files
 -------------
 - Private key for station must be located in /home/ccaruser/keys
-- Raw data directory must exist at /home/ccaruser/data/rawgps
-- Position data directory must exist at /home/ccaruser/data/position
 
 
 Author
