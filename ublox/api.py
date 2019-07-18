@@ -12,10 +12,10 @@ def save_to_dc(cache, t, data):
 def send_old(cache, url, key):
     for i in cache:
         count = 0
-        while not send(url, key, cache[i], 'Old ') and count < 10:
-            count += 1
-        if count < 10:
-            del cache[i]
+        for j in range(10):
+            if send(url, key, cache[i], 'Old'):
+                del cache[i]
+                break
 
 
 def call_send(url, key, data, t, cache):
