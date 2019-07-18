@@ -119,7 +119,7 @@ def main():
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
                     print('b')
                     mod_raw = (packet.rcvTow - packet.leapS) % 60
-                    if mod_raw > prev_raw:
+                    if mod_raw >= prev_raw:
                         raw.append(packet)
                         week = packet.week
                         leapS = packet.leapS
@@ -131,7 +131,7 @@ def main():
                     print('c')
                     mod_pos = ((packet.iTOW / 1000) - leapS) % 60
                     print(mod_pos)
-                    if mod_pos > prev_pos:
+                    if mod_pos >= prev_pos:
                         hp_pos.append(packet)
                         prev_pos = mod_pos
                     else:
