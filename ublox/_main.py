@@ -107,12 +107,12 @@ def main():
 
     try:
         while True:
+            print('a')
             led_timer = dt.datetime.utcnow()
             raw, hp_pos = next_raw, next_pos  # Initialization of vectors
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while True:
-                print('a')
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
