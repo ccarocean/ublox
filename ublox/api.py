@@ -13,20 +13,15 @@ def save_to_dc(cache, t, data):
 def send_old(cache, url, key):
     """ Function for sending old data saved to the diskcache when the program couldn't connect to the web server. """
     for i in cache:
-        for j in range(10):
-            if send(url, key, cache[i], 'Old '):
-                del cache[i]
-                break
+        if send(url, key, cache[i], 'Old '):
+            del cache[i]
 
 
 def call_send(url, key, data, t, cache):
     """ Function for calling send and checking if packet is sent. This is threaded to speed up data collection. """
     send_old(cache, url, key)
     if data:
-        count = 0
-        while not send(url, key, data, 'New ') and count < 10:
-            count += 1
-        if count == 10:
+        if not send(url, key, data, 'New '):
             save_to_dc(cache, t, data)
             print('No connection made. Data saved to cache. ')
 
