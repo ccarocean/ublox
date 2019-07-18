@@ -151,7 +151,7 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
                 print('t2', t2.isAlive())
-                print(raw)
+                print(raw[0])
                 if not t2.isAlive():
                     t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
                                                         (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
