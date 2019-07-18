@@ -11,9 +11,8 @@ def save_to_dc(cache, t, data):
 
 def send_old(cache, url, key):
     for i in cache:
-        count = 0
         for j in range(10):
-            if send(url, key, cache[i], 'Old'):
+            if send(url, key, cache[i], 'Old '):
                 del cache[i]
                 break
 
