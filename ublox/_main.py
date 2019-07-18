@@ -151,6 +151,7 @@ def main():
             # Get packets to send and start threads to send packets through api
             if raw:
                 p_raw = raw_packet(raw)
+                print('t2', t2.isAlive())
                 if not t2.isAlive():
                     t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
                                                         (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
@@ -161,6 +162,7 @@ def main():
 
             if hp_pos and week and leapS and not t3.is_alive():
                 p_pos = pos_packet(hp_pos, week, leapS)
+                print('t3', t3.isAlive())
                 if not t3.isAlive():
                     t3 = Thread(target=call_send, args=(url + 'posgps/' + loc, key, p_pos,
                                                         (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
