@@ -133,8 +133,13 @@ def main():
                         next_pos.append(packet)
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
-                    time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
-                                       packet.sec, packet.nano // 10**3)
+                    print(packet.nano)
+                    if (packet.nano // 10**3) > 999999 or (packet.nano // 10**3) < 0:
+                        time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
+                                           packet.sec, 0)
+                    else:
+                        time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
+                                           packet.sec, packet.nano // 10**3)
                     cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"' + ' >> newdate.log'
                     os.system(cmd)
                 else:
