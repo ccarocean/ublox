@@ -133,7 +133,6 @@ def main():
                         next_pos.append(packet)
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
-                    print(packet.nano)
                     if packet.nano < 0:
                         time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                            packet.sec, -packet.nano // 10**3)

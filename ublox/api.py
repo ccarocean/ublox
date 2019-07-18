@@ -13,7 +13,6 @@ def save_to_dc(cache, t, data):
 def send_old(cache, url, key):
     """ Function for sending old data saved to the diskcache when the program couldn't connect to the web server. """
     for i in cache:
-        print(i, cache[i])
         for j in range(10):
             if send(url, key, cache[i], 'Old '):
                 del cache[i]
