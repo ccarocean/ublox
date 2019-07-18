@@ -112,7 +112,7 @@ def main():
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while True:
-                'a'
+                print('a')
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
