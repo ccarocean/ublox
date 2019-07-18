@@ -130,6 +130,7 @@ def main():
                 elif isinstance(packet, NavHPPOSLLH) and leapS:  # If high precision gps position packet
                     print('c')
                     mod_pos = ((packet.iTOW / 1000) - leapS) % 60
+                    print(mod_pos)
                     if mod_pos > prev_pos:
                         hp_pos.append(packet)
                         prev_pos = mod_pos
