@@ -112,12 +112,11 @@ def main():
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while True:
+                'a'
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
                     mod_raw = (packet.rcvTow - packet.leapS) % 60
-                    print(mod_raw)
-                    print(dt.datetime.utcnow())
                     if mod_raw > prev_raw:
                         raw.append(packet)
                         week = packet.week
