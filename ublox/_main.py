@@ -107,17 +107,14 @@ def main():
 
     try:
         while True:
-            print('a')
             led_timer = dt.datetime.utcnow()
             raw, hp_pos = next_raw, next_pos  # Initialization of vectors
             next_raw, next_pos = [], []
             prev_raw, prev_pos = 0, 0
             while True:
-                print('p')
                 rdr = UBXReader(dev, msg_dict)  # Initialize reader
                 packet = rdr.read_packet()  # Read packet
                 if isinstance(packet, RxmRawx):  # If raw gps position packet
-                    print('b')
                     mod_raw = (packet.rcvTow - packet.leapS) % 60
                     if mod_raw >= prev_raw:
                         raw.append(packet)
@@ -128,9 +125,7 @@ def main():
                         next_raw.append(packet)
                         break
                 elif isinstance(packet, NavHPPOSLLH) and leapS:  # If high precision gps position packet
-                    print('c')
                     mod_pos = ((packet.iTOW / 1000) - leapS) % 60
-                    print(mod_pos)
                     if mod_pos >= prev_pos:
                         hp_pos.append(packet)
                         prev_pos = mod_pos
@@ -138,7 +133,6 @@ def main():
                         next_pos.append(packet)
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
-                    print('d')
                     if packet.nano < 0:
                         time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                            packet.sec, -packet.nano // 10**3)
@@ -157,8 +151,6 @@ def main():
             if raw:
                 p_raw = raw_packet(raw)
                 print('t2', t2.isAlive())
-                print(raw[0])
-                print(raw[-1])
                 if not t2.isAlive():
                     t2 = Thread(target=call_send, args=(url + 'rawgps/' + loc, key, p_raw,
                                                         (dt.datetime.utcnow()-dt.datetime(1970, 1, 1)).total_seconds(),
