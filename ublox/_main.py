@@ -53,6 +53,8 @@ def main():
     parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
     args = parser.parse_args()
 
+    print(args.configfile)
+
     if args.comm == "USB":
         port = '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_GNSS_receiver-if00'  # Serial port  TODO: UART
     elif args.comm == "UART":
