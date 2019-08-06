@@ -46,7 +46,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--comm', type=str, default="USB",
                         help='Communication type ("USB" or "UART"). Default is "USB"')
-    parser.add_argument('-f', '--configfile', type=str, default='default.ini',
+    parser.add_argument('-f', '--configfile', type=str, default=os.path.realpath(__file__) + '/../default.ini',
                         help='Location of configuration file to use. Default is "default.ini"')
     parser.add_argument('-l', '--location', type=str, default=def_loc,
                         help='GPS location. Default is first four letters of hostname (' + def_loc + ')')
