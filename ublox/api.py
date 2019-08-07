@@ -3,6 +3,7 @@ import jwt
 import datetime as dt
 import struct
 import numpy as np
+import logging
 
 
 def save_to_dc(cache, t, data):
@@ -23,7 +24,7 @@ def call_send(url, key, data, t, cache):
     if data:
         if not send(url, key, data, 'New '):
             save_to_dc(cache, t, data)
-            print('No connection made. Data saved to cache. ')
+            logging.warning('No connection made. Data saved to cache. ')
 
 
 def send(url, key, data, s):
@@ -37,7 +38,8 @@ def send(url, key, data, s):
         return False
     if upload.status_code != 201:
         return False
-    print(s + url[-11:-5].upper() + " Packet sent at", dt.datetime.utcnow())
+
+    logging.info(s + url[-11:-5].upper() + " Packet sent at", dt.datetime.utcnow())
     return True
 
 

@@ -5,6 +5,7 @@ import sys
 import os
 import socket
 import diskcache as dc
+import logging
 from configparser import ConfigParser
 from threading import Thread
 from .ublox_reader import UBXReader
@@ -21,12 +22,13 @@ def read_key(fname):
         with open(fname, 'r') as f:
             key = f.read()
     except FileNotFoundError:
-        print("Bad key location. ")
+        logging.critical("Bad key location: " + fname)
         sys.exit(0)
     return key
 
 
 def main():
+    logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.DEBUG)
     url = 'https://cods.colorado.edu/api/gpslidar/'
     msg_dict = {NavTimeUTC.id: NavTimeUTC,
                 NavHPPOSLLH.id: NavHPPOSLLH,
@@ -58,7 +60,7 @@ def main():
     elif args.comm == "UART":
         port = '/dev/ttyS0'
     else:
-        print("Bad communication type. ")
+        logging.critical("Bad communication type: " + args.comm)
         sys.exit(0)
 
     dev = serial.Serial(port,
@@ -103,7 +105,7 @@ def main():
     t3 = Thread(target=send_old, args=(cache_pos, url + 'posgps/' + loc, key))
     t3.start()
 
-    print('Starting ' + loc + ' GPS at:', dt.datetime.utcnow())
+    logging.info('Starting ' + loc + ' GPS at:', dt.datetime.utcnow())
 
     try:
         while True:
@@ -139,7 +141,8 @@ def main():
                     else:
                         time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
                                            packet.sec, packet.nano // 10**3)
-                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"' + ' >> newdate.log'
+                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"'
+                    logging.info(cmd)
                     os.system(cmd)
                 else:
                     pass

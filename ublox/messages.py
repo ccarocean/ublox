@@ -76,7 +76,7 @@ class UnknownPacket(ReceivedPacket):
         self._payload = payload
 
     def __str__(self):
-        print('Unknown Packet. ID: ' + str(self._id))
+        return 'Unknown Packet. ID: ' + str(self._id)
 
     @property
     def msg_id(self):
