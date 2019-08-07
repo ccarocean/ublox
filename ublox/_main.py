@@ -15,7 +15,7 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
 from .api import call_send, pos_packet, raw_packet, save_to_dc, send_old
 from .led import LED
 
-logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.DEBUG)
+logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.INFO)
 
 
 def read_key(fname):
