@@ -4,6 +4,7 @@ import datetime as dt
 import struct
 import numpy as np
 import logging
+logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.DEBUG)
 
 
 def save_to_dc(cache, t, data):
@@ -39,7 +40,7 @@ def send(url, key, data, s):
     if upload.status_code != 201:
         return False
 
-    logging.info(s + url[-11:-5].upper() + " Packet sent at", dt.datetime.utcnow())
+    logging.info(s + url[-11:-5].upper() + " Packet sent at " + str(dt.datetime.utcnow()))
     return True
 
 

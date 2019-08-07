@@ -15,6 +15,8 @@ from .messages import NavTimeUTC, NavHPPOSLLH, AckAck, AckNak, CfgValgetRec, Rxm
 from .api import call_send, pos_packet, raw_packet, save_to_dc, send_old
 from .led import LED
 
+logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.DEBUG)
+
 
 def read_key(fname):
     """ Function for reading private key for a given location. """
@@ -28,7 +30,6 @@ def read_key(fname):
 
 
 def main():
-    logging.basicConfig(filename='/home/ccaruser/gps.log', level=logging.DEBUG)
     url = 'https://cods.colorado.edu/api/gpslidar/'
     msg_dict = {NavTimeUTC.id: NavTimeUTC,
                 NavHPPOSLLH.id: NavHPPOSLLH,
@@ -105,7 +106,7 @@ def main():
     t3 = Thread(target=send_old, args=(cache_pos, url + 'posgps/' + loc, key))
     t3.start()
 
-    logging.info('Starting ' + loc + ' GPS at:', dt.datetime.utcnow())
+    logging.info('Starting ' + loc + ' GPS at: ' + str(dt.datetime.utcnow()))
 
     try:
         while True:
