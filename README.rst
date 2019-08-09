@@ -9,7 +9,7 @@ Optional arguments:
     -c COMM, --comm COMM                    Communication type ("USB" or "UART"). Default is "USB"
     -f CONFIGFILE, --configfile CONFIGFILE  Location of configuration file. Default is 'default.ini'
     -l LOCATION, --location LOCATION        GPS location. Default is first four letters of hostname (ex. harv)
-    --led LED                               LED Pin. default is 20
+    --led LED                               LED Pin. default is 21
 
 Installation
 ------------
