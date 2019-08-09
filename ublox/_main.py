@@ -53,7 +53,7 @@ def main():
                         help='Location of configuration file to use. Default is "default.ini"')
     parser.add_argument('-l', '--location', type=str, default=def_loc,
                         help='GPS location. Default is first four letters of hostname (' + def_loc + ')')
-    parser.add_argument('--led', type=int, default=20, help='LED pin. Default is 20.')
+    parser.add_argument('--led', type=int, default=21, help='LED pin. Default is 21.')
     args = parser.parse_args()
 
     if args.comm == "USB":
