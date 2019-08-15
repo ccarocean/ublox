@@ -136,15 +136,16 @@ def main():
                         next_pos.append(packet)
                         break
                 elif isinstance(packet, NavTimeUTC):  # If time packet
-                    if packet.nano < 0:
-                        time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
-                                           packet.sec, -packet.nano // 10**3)
-                    else:
-                        time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
-                                           packet.sec, packet.nano // 10**3)
-                    cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"'
-                    logging.info(cmd)
-                    os.system(cmd)
+                    #if packet.nano < 0:
+                    #    time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
+                    #                       packet.sec, -packet.nano // 10**3)
+                    #else:
+                    #    time = dt.datetime(packet.year, packet.month, packet.day, packet.hour, packet.min,
+                    #                       packet.sec, packet.nano // 10**3)
+                    #cmd = 'sudo date -s "' + time.strftime('%Y-%m-%d %H:%M:%S') + 'UTC"'
+                    #logging.info(cmd)
+                    #os.system(cmd)
+                    pass
                 else:
                     pass
                 if (dt.datetime.utcnow() - led_timer).total_seconds() >= 1:  # Switch led every second
