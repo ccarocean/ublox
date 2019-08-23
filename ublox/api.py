@@ -15,8 +15,11 @@ def save_to_dc(cache, t, data):
 def send_old(cache, url, key):
     """ Function for sending old data saved to the diskcache when the program couldn't connect to the web server. """
     for i in cache:
-        if send(url, key, cache[i], 'Old '):
-            del cache[i]
+        try:
+            if send(url, key, cache[i], 'Old '):
+                del cache[i]
+        except KeyError:
+            logging.warning('Key Error for ' + str(i))
 
 
 def call_send(url, key, data, t, cache):
